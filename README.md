@@ -1,2 +1,10 @@
-# crash-course-fullstack-react
-course project of simple fullstack react application
+# Crash course for simple fullstack application
+
+        <ul>
+          <li>React</li>
+          <li>Tailwind CSS</li>
+          <li>Html</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+          <li>and more...</li>
+        </ul>

@@ -1,10 +1,9 @@
 # Crash course for simple fullstack application
-
-        <ul>
-          <li>React</li>
-          <li>Tailwind CSS</li>
-          <li>Html</li>
-          <li>CSS</li>
-          <li>JavaScript</li>
-          <li>and more...</li>
-        </ul>
+<ul>
+        <li>React</li>
+        <li>Tailwind CSS</li>
+        <li>Html</li>
+         <li>CSS</li>
+        <li>JavaScript</li>
+        <li>and more...</li>
+</ul>

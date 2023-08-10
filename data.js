@@ -46,7 +46,3 @@ const initialFacts = [
 // LINK TO APP SAMPLE DATA: https://docs.google.com/spreadsheets/d/1eeldcA_OwP4DHYEvjG0kDe0cRys-cDPhc_E9P9G1e3I/edit#gid=0
 
 // 👍 🤯 ⛔️
-
-// curl 'https://gvrxxrzbuczgmaeldtgs.supabase.co/rest/v1/react-fact-app' \
-// -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2cnh4cnpidWN6Z21hZWxkdGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTE2NjEyNzYsImV4cCI6MjAwNzIzNzI3Nn0.pyRDtnME2P4F7ugCzqI3LMdZMU3dO1cXhR5QmAL5YRQ" \
-// -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2cnh4cnpidWN6Z21hZWxkdGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTE2NjEyNzYsImV4cCI6MjAwNzIzNzI3Nn0.pyRDtnME2P4F7ugCzqI3LMdZMU3dO1cXhR5QmAL5YRQ"

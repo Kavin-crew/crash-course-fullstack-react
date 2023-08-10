@@ -1,7 +1,7 @@
 # Crash course for simple fullstack application
 <ul>
         <li>React</li>
-        <li>Tailwind CSS</li>
+        <li>Supabase</li>
         <li>Html</li>
          <li>CSS</li>
         <li>JavaScript</li>

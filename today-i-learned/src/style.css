@@ -109,6 +109,10 @@ h1 {
   }
 }
 
+.fact p {
+  align-self: flex-start;
+}
+
 .tag {
   text-transform: uppercase;
   font-size: 14px;

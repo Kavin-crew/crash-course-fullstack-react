@@ -52,19 +52,36 @@ function App() {
   // then update the fact state to populate data from database
   const [facts, setFacts] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState('all');
+
   // for supabase
   // useEffect accepts 2 arguments, a function and array or the dependency array
   // empty array means this will only run once during the App components load
-  useEffect(function () {
-    async function getFacts() {
-      const { data: facts, error } = await supabase
-        .from('react-fact-app')
-        .select('*');
-      // updating the state for the values from our fetch request
-      setFacts(facts);
-    }
-    getFacts();
-  }, []);
+  useEffect(
+    function () {
+      async function getFacts() {
+        // to display simple message if our request is still working
+        setIsLoading(true);
+
+        let query = supabase.from('react-fact-app').select('*');
+        if (currentCategory !== 'all')
+          query = query.eq('category', currentCategory);
+
+        const { data: facts, error } = await query
+          .order('votesInteresting', {
+            ascending: false,
+          })
+          .limit(1000);
+        // updating the state for the values from our fetch request
+        if (!error) setFacts(facts);
+        else alert('There was a problem getting the data');
+        setIsLoading(false);
+      }
+      getFacts();
+    },
+    [currentCategory]
+  );
 
   return (
     <>
@@ -73,8 +90,12 @@ function App() {
         <NewFactForm setFacts={setFacts} setShowForm={setShowForm} />
       ) : null}
       <main className="main">
-        <CategoryFilter />
-        <FactList facts={facts} />
+        <CategoryFilter setCurrentCategory={setCurrentCategory} />
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <FactList facts={facts} setFacts={setFacts} />
+        )}
       </main>
       <footer>
         <Footer />
@@ -97,6 +118,17 @@ function App() {
 //     </div>
 //   );
 // }
+
+function Loader() {
+  return (
+    <>
+      <figure className="message-box">
+        <figcaption className="message">Loading</figcaption>
+        <img src="loader.gif" width="32" height="32" alt="spinner"></img>
+      </figure>
+    </>
+  );
+}
 
 function Header({ showForm, setShowForm }) {
   const appTitle = 'Today I Learned';
@@ -133,9 +165,11 @@ function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState('');
   const [source, setSource] = useState('http://example.com');
   const [category, setCategory] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+
   const textLength = text.length;
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     // 1. Prevent browser reload
     e.preventDefault();
 
@@ -145,22 +179,40 @@ function NewFactForm({ setFacts, setShowForm }) {
       console.log('there is data');
     }
 
-    // 3. Create a new fact object
-    const newFact = {
-      id: Math.round(Math.random() * 1000000),
-      // in javascript, if the key and value is same example text : text,
-      // we can simple use text alone, same goes to source and category
-      text,
-      source,
-      category,
-      votesInteresting: 0,
-      votesMindblowing: 0,
-      votesFalse: 0,
-      createdIn: new Date().getFullYear(),
-    };
+    // // 3. Create a new fact object
+    // const newFact = {
+    //   id: Math.round(Math.random() * 1000000),
+    //   // in javascript, if the key and value is same example text : text,
+    //   // we can simple use text alone, same goes to source and category
+    //   text,
+    //   source,
+    //   category,
+    //   votesInteresting: 0,
+    //   votesMindblowing: 0,
+    //   votesFalse: 0,
+    //   createdIn: new Date().getFullYear(),
+    // };
+
+    // 3. Upload fact to Supabase and receive the new fact object
+
+    setIsUploading(true);
+    const { data: newFact, error } = await supabase
+      .from('react-fact-app')
+      .insert([{ text, source, category }])
+      .select();
+    setIsUploading(false);
+
+    // const { data, error } = await supabase
+    //   .from('react-fact-app')
+    //   .insert([
+    //     { some_column: 'someValue' },
+    //     { some_column: 'otherValue' },
+    //   ])
+    //   .select()
 
     // 4. Add the new fact to the UI: add the fact to state
-    setFacts(facts => [newFact, ...facts]);
+    if (!error) setFacts(facts => [newFact[0], ...facts]);
+
     // 5. Reset input fields
     setText('');
     setSource('');
@@ -181,6 +233,7 @@ function NewFactForm({ setFacts, setShowForm }) {
         onChange={e => {
           setText(e.target.value);
         }}
+        disabled={isUploading}
       />
       <span>{200 - textLength}</span>
       <input
@@ -188,8 +241,13 @@ function NewFactForm({ setFacts, setShowForm }) {
         placeholder="http://example.com"
         value={source}
         onChange={e => setSource(e.target.value)}
+        disabled={isUploading}
       />
-      <select value={category} onChange={e => setCategory(e.target.value)}>
+      <select
+        value={category}
+        onChange={e => setCategory(e.target.value)}
+        disabled={isUploading}
+      >
         <option value="">Choose category:</option>
         {CATEGORIES.map(cat => (
           <option key={cat.name} value={cat.name}>
@@ -197,17 +255,24 @@ function NewFactForm({ setFacts, setShowForm }) {
           </option>
         ))}
       </select>
-      <button className="btn btn-large">Post</button>
+      <button className="btn btn-large" disabled={isUploading}>
+        Post
+      </button>
     </form>
   );
 }
 
-function CategoryFilter() {
+function CategoryFilter({ setCurrentCategory }) {
   return (
     <aside>
       <ul>
         <li className="category">
-          <button className="btn btn-all-categories">All</button>
+          <button
+            className="btn btn-all-categories"
+            onClick={() => setCurrentCategory('all')}
+          >
+            All
+          </button>
         </li>
 
         {CATEGORIES.map(cat => (
@@ -215,6 +280,7 @@ function CategoryFilter() {
             <button
               className="btn btn-category"
               style={{ backgroundColor: cat.color }}
+              onClick={() => setCurrentCategory(cat.name)}
             >
               {cat.name}
             </button>
@@ -225,19 +291,52 @@ function CategoryFilter() {
   );
 }
 
-function FactList({ facts }) {
+function FactList({ facts, setFacts }) {
+  // if no facts based on the category selected
+  if (facts.length === 0)
+    return (
+      <p className="message">
+        No facts for thos category yet! Create the first one 😉
+      </p>
+    );
+
+  // display all/selected facts
   return (
     <section>
       <ul className="facts-list">
         {facts.map(fact => (
-          <Fact key={fact.id} fact={fact} />
+          <Fact key={fact.id} fact={fact} setFacts={setFacts} />
         ))}
       </ul>
     </section>
   );
 }
 
-function Fact({ fact }) {
+function Fact({ fact, setFacts }) {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // const { data, error } = await supabase
+  // .from('react-fact-app')
+  // .update({ other_column: 'otherValue' })
+  // .eq('some_column', 'someValue')
+  // .select()
+
+  async function handleVote(columnName) {
+    setIsUpdating(true);
+    const { data: updatedFact, error } = await supabase
+      .from('react-fact-app')
+      .update({ [columnName]: fact[columnName] + 1 })
+      .eq('id', fact.id)
+      .select();
+    setIsUpdating(false);
+
+    console.log(updatedFact);
+    if (!error)
+      setFacts(facts =>
+        facts.map(f => (f.id === fact.id ? updatedFact[0] : f))
+      );
+  }
+
   return (
     <li className="fact">
       <p>
@@ -261,9 +360,21 @@ function Fact({ fact }) {
         {fact.category}
       </span>
       <div className="vote-buttons">
-        <button>👍 {fact.votesInteresting}</button>
-        <button>🤯 {fact.votesMindblowing}</button>
-        <button>⛔️ {fact.votesInteresting}</button>
+        <button
+          onClick={() => handleVote('votesInteresting')}
+          disabled={isUpdating}
+        >
+          👍 {fact.votesInteresting}
+        </button>
+        <button
+          onClick={() => handleVote('votesMindBlowing')}
+          disabled={isUpdating}
+        >
+          🤯 {fact.votesMindBlowing}
+        </button>
+        <button onClick={() => handleVote('votesFalse')} disabled={isUpdating}>
+          ⛔️ {fact.votesFalse}
+        </button>
       </div>
     </li>
   );

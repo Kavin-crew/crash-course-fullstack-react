@@ -85,13 +85,8 @@ function createFactsList(dataArray) {
 
   const htmlArr = dataArray.map(
     fact => `<li class="fact">
-    <p>
-    ${fact.text}
-      <a
-        class="source"
-        href="${fact.source}"
-        target="_blank"
-      >(Source)</a>
+    <p>${fact.text}
+      <a class="source" href="${fact.source}" target="_blank">(Source)</a>
     </p>
     <span class="tag" style="background-color: ${
       CATEGORIES.find(cat => cat.name === fact.category).color

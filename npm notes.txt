@@ -1,0 +1,2 @@
+npx create-react-app today-i-learned
+npm run start

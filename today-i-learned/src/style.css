@@ -13,7 +13,7 @@ body {
 
 @media (max-width: 1000px) {
   body {
-    /* padding: 30px 25px; */
+    padding: 45px 25px;
   }
 }
 
@@ -57,9 +57,10 @@ section {
   height: calc(100vh - 20px);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .main {
     grid-template-columns: 1fr;
+    height: auto;
   }
 }
 

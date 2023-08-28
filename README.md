@@ -1,4 +1,4 @@
-<i>currently the supabase database is paused, due to Inactive of data, but can be unpaused anytime.</i>
+<p>currently the supabase database is paused, due to Inactive of data, but can be unpaused anytime.</p>
 
 # Crash course for simple fullstack application
 <ul>

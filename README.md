@@ -1,3 +1,5 @@
+<i>currently the supabase database is paused, due to Inactive of data, but can be unpaused anytime.</i>
+
 # Crash course for simple fullstack application
 <ul>
         <li>React</li>
